@@ -126,16 +126,15 @@ export function useTxAction() {
         if (chainId !== ACTIVE_CHAIN.id) await switchChainAsync({ chainId: ACTIVE_CHAIN.id });
 
         setState({ phase: "simulating", label });
-        const call = { ...req, account: address } as Parameters<typeof client.simulateContract>[0];
+        // Requests are built from typed ABIs elsewhere; erase generics here so one runner fits all.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const call: any = { ...req, account: address };
         await client.simulateContract(call);
-        const gas = await client.estimateContractGas(call as Parameters<typeof client.estimateContractGas>[0]);
+        const gas: bigint = await client.estimateContractGas(call);
 
         setState({ phase: "signing", label });
-        const hash = await writeContractAsync({
-          ...(req as Parameters<typeof writeContractAsync>[0]),
-          chainId: ACTIVE_CHAIN.id,
-          gas: (gas * 12n) / 10n,
-        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const hash: Hash = await writeContractAsync({ ...(req as any), chainId: ACTIVE_CHAIN.id, gas: (gas * 12n) / 10n });
         track(hash, label);
         setState({ phase: "pending", label, hash });
 
@@ -164,7 +163,8 @@ export async function estimateGasCost(
   req: WriteRequest,
 ): Promise<{ units: bigint; wei: bigint } | null> {
   try {
-    const call = { ...req, account } as Parameters<typeof client.estimateContractGas>[0];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const call: any = { ...req, account };
     const [units, fees] = await Promise.all([client.estimateContractGas(call), client.estimateFeesPerGas()]);
     return { units, wei: units * (fees.maxFeePerGas ?? fees.gasPrice ?? 0n) };
   } catch {

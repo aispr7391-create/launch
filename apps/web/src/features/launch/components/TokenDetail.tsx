@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { formatEther, type Address } from "viem";
+import { formatEther, zeroAddress, type Address } from "viem";
 import { useReadContracts } from "wagmi";
 import { getContract } from "@/config/contracts";
 import { ACTIVE_CHAIN } from "@/config/wagmi";
@@ -28,16 +28,16 @@ export function TokenDetail({ address }: { address: Address }) {
       { address, abi: erc20MetaAbi, functionName: "decimals", chainId },
     ],
   });
+  const lp = launchpad ?? zeroAddress;
   const curve = useReadContracts({
-    contracts: launchpad
-      ? [
-          { address: launchpad, abi: launchpadAbi, functionName: "getLaunch", args: [address], chainId },
-          { address: launchpad, abi: launchpadAbi, functionName: "progressBps", args: [address], chainId },
-          { address: launchpad, abi: launchpadAbi, functionName: "spotPrice", args: [address], chainId },
-        ]
-      : [],
+    contracts: [
+      { address: lp, abi: launchpadAbi, functionName: "getLaunch", args: [address], chainId },
+      { address: lp, abi: launchpadAbi, functionName: "progressBps", args: [address], chainId },
+      { address: lp, abi: launchpadAbi, functionName: "spotPrice", args: [address], chainId },
+    ],
     query: { enabled: Boolean(launchpad), refetchInterval: 15_000 },
   });
+
   const meta = useQuery({
     queryKey: ["token-meta", address],
     queryFn: async (): Promise<TokenRow | null> => {

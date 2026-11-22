@@ -1,5 +1,6 @@
 "use client";
 
+import { zeroAddress } from "viem";
 import { useReadContracts } from "wagmi";
 import { getContract } from "@/config/contracts";
 import { ACTIVE_CHAIN } from "@/config/wagmi";
@@ -15,18 +16,20 @@ export type LaunchpadState =
 /** Reads protocol parameters from the deployed launchpad. Never falls back to assumed values. */
 export function useLaunchpadConfig(): LaunchpadState {
   const address = getContract("pxLaunchpad");
+  // Always the same 4-call shape (zero address while not deployed, query disabled) so the
+  // contracts tuple keeps one static type.
+  const target = address ?? zeroAddress;
   const q = useReadContracts({
     allowFailure: false,
-    contracts: address
-      ? ([
-          { address, abi: launchpadAbi, functionName: "config", chainId: ACTIVE_CHAIN.id },
-          { address, abi: launchpadAbi, functionName: "MIN_SUPPLY", chainId: ACTIVE_CHAIN.id },
-          { address, abi: launchpadAbi, functionName: "MAX_SUPPLY", chainId: ACTIVE_CHAIN.id },
-          { address, abi: launchpadAbi, functionName: "paused", chainId: ACTIVE_CHAIN.id },
-        ] as const)
-      : [],
+    contracts: [
+      { address: target, abi: launchpadAbi, functionName: "config", chainId: ACTIVE_CHAIN.id },
+      { address: target, abi: launchpadAbi, functionName: "MIN_SUPPLY", chainId: ACTIVE_CHAIN.id },
+      { address: target, abi: launchpadAbi, functionName: "MAX_SUPPLY", chainId: ACTIVE_CHAIN.id },
+      { address: target, abi: launchpadAbi, functionName: "paused", chainId: ACTIVE_CHAIN.id },
+    ],
     query: { enabled: Boolean(address), refetchInterval: 60_000 },
   });
+
 
   if (!address) return { kind: "not-deployed" };
   if (q.isLoading) return { kind: "loading" };
