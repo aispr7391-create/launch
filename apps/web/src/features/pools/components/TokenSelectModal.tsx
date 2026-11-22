@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { isAddress } from "viem";
 import { Badge, Button, Skeleton } from "@/components/ui/primitives";
 import { Icon } from "@/components/ui/Icon";
+import { Portal } from "@/components/ui/Portal";
 import { cn } from "@/lib/cn";
 import { shortAddress } from "@/lib/format";
 import { useClient } from "../hooks";
@@ -56,7 +57,8 @@ export function TokenSelectModal({ onSelect, onClose, exclude }: { onSelect: (t:
   const showEth = !q.trim() || "eth ether".includes(q.trim().toLowerCase());
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="dialog" aria-modal aria-labelledby="tok-title">
+    <Portal>
+    <div className="fixed inset-0 z-[60] flex items-end justify-center sm:items-center" role="dialog" aria-modal aria-labelledby="tok-title">
       <button className="animate-fade absolute inset-0 bg-black/70 backdrop-blur-sm" aria-label="Close" onClick={onClose} />
       <div className="animate-rise relative flex max-h-[85dvh] w-full max-w-md flex-col rounded-t-2xl border border-line bg-surface sm:rounded-2xl">
         <div className="flex items-center justify-between px-5 pb-3 pt-5">
@@ -97,6 +99,7 @@ export function TokenSelectModal({ onSelect, onClose, exclude }: { onSelect: (t:
         </ul>
       </div>
     </div>
+    </Portal>
   );
 }
 
