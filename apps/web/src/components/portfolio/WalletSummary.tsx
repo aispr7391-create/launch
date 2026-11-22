@@ -10,7 +10,9 @@ import { formatToken, shortAddress } from "@/lib/format";
 
 export function WalletSummary() {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const { address, isConnected, chainId, connector } = useAccount();
   const balance = useBalance({ address, chainId: ACTIVE_CHAIN.id, query: { refetchInterval: 15_000 } });
 

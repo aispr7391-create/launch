@@ -36,7 +36,7 @@ export async function GET(req: Request, { params }: { params: Promise<{ address:
     while (events.length < WANT && chunks < MAX_CHUNKS && to > 0n) {
       const from = to > CHUNK ? to - CHUNK + 1n : 0n;
       const logs = await serverClient.getLogs({ address: pool, fromBlock: from, toBlock: to });
-      const parsed = parseEventLogs({ abi: v3PoolAbi, logs, eventName: kind === "swap" ? ["Swap"] : ["Mint", "Burn"] });
+      const parsed = parseEventLogs({ abi: v3PoolAbi, logs, eventName: (kind === "swap" ? ["Swap"] : ["Mint", "Burn"]) as ("Swap" | "Mint" | "Burn")[] });
       for (const l of parsed.reverse()) {
         const base = { kind: l.eventName, blockNumber: l.blockNumber.toString(), txHash: l.transactionHash, logIndex: l.logIndex };
         if (l.eventName === "Swap") {

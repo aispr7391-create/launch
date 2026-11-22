@@ -11,7 +11,9 @@ import { shortAddress, timeAgo } from "@/lib/format";
 /** Transactions sent from this app (receipt-confirmed), plus a link to full history on the explorer. */
 export function ActivityList() {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const { txs } = useTxTracker();
   const { address } = useAccount();
 

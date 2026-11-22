@@ -64,7 +64,7 @@ export function PoolDetail({ address }: { address: string }) {
           <Stat label="Current price" value={<button onClick={() => setInvert((v) => !v)} className="hover:text-accent" title="Invert">{formatPrice(price)}</button>} hint={`${quote.symbol} per ${base.symbol} · tap to invert`} />
           <Stat label={`${token0.symbol} in pool`} value={fmtAmount(p.reserve0, token0.decimals)} hint="Token balance of pool" />
           <Stat label={`${token1.symbol} in pool`} value={fmtAmount(p.reserve1, token1.decimals)} hint="Token balance of pool" />
-          <Stat label="Active liquidity (L)" value={p.liquidity.toLocaleString("en-US", { notation: "compact" } as Intl.NumberFormatOptions)} hint={`Tick ${p.tick}`} />
+          <Stat label="Active liquidity (L)" value={Number(p.liquidity).toLocaleString("en-US", { notation: "compact", maximumFractionDigits: 2 })} hint={`Tick ${p.tick}`} />
           <Stat label="24h volume" value={indexed ? (indexed.volume_eth_24h !== null ? `${indexed.volume_eth_24h.toPrecision(4)} ETH` : `${fmtAmount(BigInt(indexed.volume0_24h), token0.decimals)} ${token0.symbol}`) : "—"} hint={indexed ? `${indexed.swaps_24h} swaps (indexed)` : "Needs indexer"} />
           <Stat label="Fee tier" value={feeLabel(p.fee)} hint={`Tick spacing ${p.tickSpacing}`} />
           <Stat label="Created" value={indexed?.created_at ? new Date(indexed.created_at).toLocaleDateString() : "—"} hint={indexed ? `Block ${indexed.created_block}` : "Needs indexer"} />

@@ -129,7 +129,9 @@ export function useLaunchFlow() {
   const logoCache = useRef<{ file: File; url: string } | null>(null);
   const [pending, setPending] = useState<ReturnType<typeof readPendingLaunch>>(null);
 
-  useEffect(() => setPending(readPendingLaunch()), []);
+  useEffect(() => {
+    setPending(readPendingLaunch());
+  }, []);
 
   const go = useCallback((step: FlowStep) => {
     setState((s) => ({ ...s, status: "running", step, done: s.step && s.step !== step ? [...s.done, s.step] : s.done }));

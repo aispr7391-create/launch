@@ -37,7 +37,12 @@ export function LogoField({
   const [dragging, setDragging] = useState(false);
 
   // Release the object URL when the logo is replaced or the form unmounts.
-  useEffect(() => () => value?.previewUrl && URL.revokeObjectURL(value.previewUrl), [value?.previewUrl]);
+  useEffect(() => {
+    const url = value?.previewUrl;
+    return () => {
+      if (url) URL.revokeObjectURL(url);
+    };
+  }, [value?.previewUrl]);
 
   const accept = async (file: File | undefined) => {
     if (!file) return;

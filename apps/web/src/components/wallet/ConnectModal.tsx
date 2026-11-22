@@ -28,7 +28,9 @@ export function ConnectModal({ onClose }: { onClose: () => void }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
-  useEffect(() => () => reset(), [reset]);
+  useEffect(() => {
+    return () => reset();
+  }, [reset]);
 
   const pendingId = isPending ? (variables?.connector as Connector | undefined)?.uid : undefined;
 

@@ -79,7 +79,9 @@ export function Swap() {
   const impact = q ? priceImpactBps(q.midOut, q.amountOut) : 0;
   const level = impactLevel(impact);
   const minOut = q ? minimumReceived(q.amountOut, slip) : 0n;
-  useEffect(() => setAckImpact(false), [q?.amountOut]);
+  useEffect(() => {
+    setAckImpact(false);
+  }, [q?.amountOut]);
 
   const balIn = useTokenBalance(tokenIn ? (isNative(tokenIn) ? "ETH" : inAddr) : undefined);
   const balOut = useTokenBalance(tokenOut ? (isNative(tokenOut) ? "ETH" : outAddr) : undefined);
@@ -309,7 +311,9 @@ function SwapHistory() {
   const { txs } = useTxTracker();
   const { address } = useAccount();
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
   const swaps = useMemo(() => txs.filter((t) => /^(Swap|Approve)/.test(t.label)).slice(0, 15), [txs]);
   return (
     <Card>

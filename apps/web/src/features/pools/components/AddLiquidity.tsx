@@ -316,7 +316,7 @@ export function AddLiquidity() {
                     <span>{!needed ? "Not needed for this range" : insufficient ? <span className="text-down">Insufficient balance</span> : ""}</span>
                     {bal !== undefined && (
                       <button type="button" className="hover:text-fg" disabled={!needed || busy}
-                        onClick={() => { set(toInput(t && isNative(t) && bal > 2n * 10n ** 15n ? bal - 2n * 10n ** 15n : bal, dec)); setEdited(k); }}>
+                        onClick={() => { const b = bal ?? 0n; set(toInput(t && isNative(t) && b > 2n * 10n ** 15n ? b - 2n * 10n ** 15n : b, dec)); setEdited(k); }}>
                         Balance: <span className="num">{fmtAmount(bal, dec)}</span> · Max
                       </button>
                     )}

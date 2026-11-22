@@ -11,7 +11,9 @@ export function ConnectWalletButton({ block = false }: { block?: boolean }) {
   const { isConnected, isConnecting, isReconnecting } = useAccount();
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Close the modal once a connection succeeds.
   useEffect(() => {
