@@ -1,0 +1,11 @@
+{
+  "name": "project-x",
+  "private": true,
+  "workspaces": ["apps/*"],
+  "scripts": {
+    "dev": "npm run dev -w @project-x/web",
+    "build": "npm run build -w @project-x/web",
+    "typecheck": "npm run typecheck -w @project-x/web"
+  },
+  "engines": { "node": ">=20" }
+}
