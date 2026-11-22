@@ -1,9 +1,7 @@
 import { cookieStorage, createConfig, createStorage, fallback, http, type Transport } from "wagmi";
-import { injected, walletConnect } from "wagmi/connectors";
 import type { Chain } from "viem";
 import { alchemyRpcUrl, robinhoodChain } from "./chains";
-import { ALCHEMY_API_KEY, APP_URL, WALLETCONNECT_PROJECT_ID } from "./env";
-import { BRAND } from "./brand";
+import { ALCHEMY_API_KEY } from "./env";
 
 /** PROJECT X runs on Robinhood Chain Mainnet (4663) only. There is no network selector. */
 export const ACTIVE_CHAIN: Chain = robinhoodChain;
@@ -16,29 +14,19 @@ function transportFor(chain: Chain): Transport {
   return fallback(urls.map((url) => http(url, { batch: true })));
 }
 
-const connectors = [
-  // Covers MetaMask, Rabby, Coinbase Wallet extension, etc. EIP-6963 discovery
-  // (on by default in wagmi) lists every installed wallet individually.
-  injected({ shimDisconnect: true }),
-  ...(WALLETCONNECT_PROJECT_ID
-    ? [
-        walletConnect({
-          projectId: WALLETCONNECT_PROJECT_ID,
-          showQrModal: true,
-          metadata: {
-            name: BRAND.name,
-            description: BRAND.description,
-            url: APP_URL,
-            icons: [`${APP_URL}/icon.svg`],
-          },
-        }),
-      ]
-    : []),
-];
+/**
+ * Wallets: browser wallets announced via EIP-6963 (MetaMask, Rabby, Coinbase Wallet extension,
+ * ...). wagmi discovers them automatically (`multiInjectedProviderDiscovery`, on by default), so
+ * no connector list is needed.
+ *
+ * `wagmi/connectors` is deliberately NOT imported: that barrel pulls in every optional
+ * connector SDK (Coinbase/Base account -> @coinbase/cdp-sdk -> @x402/*), which breaks the
+ * Next.js build ("Module not found: Can't resolve '@x402/...'").
+ */
 
 export const wagmiConfig = createConfig({
   chains: [ACTIVE_CHAIN],
-  connectors,
+  multiInjectedProviderDiscovery: true,
   transports: { [ACTIVE_CHAIN.id]: transportFor(ACTIVE_CHAIN) },
   ssr: true,
   storage: createStorage({ storage: cookieStorage }),

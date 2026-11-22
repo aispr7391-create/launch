@@ -9,7 +9,7 @@ import { cn } from "@/lib/cn";
 
 /**
  * Custom wallet picker. Lists every EIP-6963 wallet the browser announces, plus
- * WalletConnect when configured. The generic "Injected" entry is shown only if
+ * The generic "Injected" entry is shown only if
  * no specific wallet was discovered.
  */
 export function ConnectModal({ onClose }: { onClose: () => void }) {
@@ -71,7 +71,7 @@ export function ConnectModal({ onClose }: { onClose: () => void }) {
           ))}
           {list.length === 0 && (
             <li className="rounded-xl border border-line p-4 text-sm text-muted">
-              No wallet detected. Install an EVM wallet extension, or enable WalletConnect for mobile wallets.
+              No wallet detected. Install an EVM browser wallet (MetaMask, Rabby, Coinbase Wallet), or open this site in your mobile wallet&apos;s built-in browser.
             </li>
           )}
         </ul>
