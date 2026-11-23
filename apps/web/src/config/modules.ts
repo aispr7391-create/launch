@@ -127,7 +127,7 @@ export const MODULES: ModuleDef[] = [
     href: "/analytics",
     label: "Analytics",
     stage: 7,
-    status: "planned",
+    status: "partial",
     group: "more",
     summary: "Protocol-wide statistics, every number traceable to on-chain events.",
     features: ["Tokens launched / graduated", "Volume and liquidity", "Protocol fees", "Daily and launch activity"],

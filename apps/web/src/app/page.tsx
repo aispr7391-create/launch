@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { BRAND } from "@/config/brand";
 import { MODULES, type ModuleKey } from "@/config/modules";
-import { Card, CardHeader, PageHeader, StatusBadge } from "@/components/ui/primitives";
+import { Card, PageHeader, StatusBadge } from "@/components/ui/primitives";
 import { Icon } from "@/components/ui/Icon";
 import { WalletSummary } from "@/components/portfolio/WalletSummary";
 import { ActivityList } from "@/components/portfolio/ActivityList";
+import { MarketActivity } from "@/features/market/MarketActivity";
 
 const QUICK_ACTIONS: { label: string; href: string; icon: ModuleKey }[] = [
   { label: "Launch token", href: "/launch", icon: "launch" },
@@ -41,13 +42,7 @@ export default function OverviewPage() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-3">
-        <Card className="lg:col-span-2">
-          <CardHeader eyebrow="Market activity" title="Trending, new launches, volume" action={<StatusBadge status="planned" />} />
-          <p className="px-5 py-6 text-[13px] leading-5 text-muted">
-            Market data appears here once the indexer is live (Stage 6). Until then nothing is shown — no placeholder prices
-            or volumes.
-          </p>
-        </Card>
+        <MarketActivity />
         <WalletSummary />
       </section>
 
