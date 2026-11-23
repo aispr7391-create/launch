@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { INTEGRATIONS, type IntegrationState } from "@/config/integrations";
 import { ACTIVE_CHAIN } from "@/config/wagmi";
 import { Badge, Card, CardHeader, PageHeader } from "@/components/ui/primitives";
-import { LiveNetworkPanel } from "@/components/network/LiveNetworkPanel";
 import { OnchainChecks } from "@/components/network/OnchainChecks";
 
 export const metadata: Metadata = { title: "Status" };
@@ -29,8 +28,6 @@ export default function NetworkPage() {
         title="Status"
         description="Robinhood Chain Mainnet configuration, live RPC health, and on-chain verification of every integrated contract."
       />
-
-      <LiveNetworkPanel />
 
       <Card>
         <CardHeader eyebrow="Configuration" title="Active network" />

@@ -3,7 +3,6 @@ import { BRAND } from "@/config/brand";
 import { MODULES, type ModuleKey } from "@/config/modules";
 import { Card, CardHeader, PageHeader, StatusBadge } from "@/components/ui/primitives";
 import { Icon } from "@/components/ui/Icon";
-import { LiveNetworkPanel } from "@/components/network/LiveNetworkPanel";
 import { WalletSummary } from "@/components/portfolio/WalletSummary";
 import { ActivityList } from "@/components/portfolio/ActivityList";
 
@@ -43,13 +42,6 @@ export default function OverviewPage() {
       </section>
 
       <section className="grid gap-4 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          <LiveNetworkPanel />
-        </div>
-        <WalletSummary />
-      </section>
-
-      <section className="grid gap-4 lg:grid-cols-3">
         <Card className="lg:col-span-2">
           <CardHeader eyebrow="Market activity" title="Trending, new launches, volume" action={<StatusBadge status="planned" />} />
           <p className="px-5 py-6 text-[13px] leading-5 text-muted">
@@ -57,8 +49,10 @@ export default function OverviewPage() {
             or volumes.
           </p>
         </Card>
-        <ActivityList />
+        <WalletSummary />
       </section>
+
+      <ActivityList />
 
       <section>
         <div className="mb-3 flex items-baseline justify-between">
