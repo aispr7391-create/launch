@@ -37,7 +37,7 @@ export const INTEGRATIONS: Integration[] = [
     note: "Live per Uniswap, but no official address page could be found. Not integrated.",
   },
   {
-    name: "PROJECT X Launchpad, Graduator, StakingHub",
+    name: "PROJECT X Launchpad and Graduator",
     state: "missing",
     note: "Written with unit, fuzz and fork tests. Not deployed: audit required before mainnet.",
   },

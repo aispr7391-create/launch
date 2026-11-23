@@ -8,6 +8,9 @@ const nextConfig: NextConfig = {
     config.externals.push("pino-pretty", "lokijs", "encoding");
     return config;
   },
+  async redirects() {
+    return [{ source: "/stake", destination: "/", permanent: false }];
+  },
   async headers() {
     return [
       {

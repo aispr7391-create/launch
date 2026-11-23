@@ -10,7 +10,7 @@ export const BRAND = {
   shortName: "PX",
   tagline: "Launch, trade and earn on Robinhood Chain.",
   description:
-    "A DeFi platform built exclusively for Robinhood Chain: token launches, trading, liquidity and staking in one place.",
+    "A DeFi platform built exclusively for Robinhood Chain: token launches, trading and liquidity in one place.",
   links: {
     docs: "",
     x: "",

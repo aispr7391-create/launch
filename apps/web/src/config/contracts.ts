@@ -26,8 +26,7 @@ export type ContractKey =
   | "uniswapV4StateView"
   | "uniswapV4Quoter"
   | "pxLaunchpad"
-  | "pxGraduator"
-  | "pxStakingHub";
+  | "pxGraduator";
 
 export interface ContractEntry {
   label: string;
@@ -79,7 +78,6 @@ export const CONTRACTS: Record<ContractKey, ContractEntry> = {
   uniswapV4Quoter: { label: "Uniswap v4 Quoter", address: "0x8dc178efb8111bb0973dd9d722ebeff267c98f94", source: UNI_V4 },
   pxLaunchpad: { label: "PROJECT X BondingCurveLaunchpad", address: null, source: OURS },
   pxGraduator: { label: "PROJECT X UniswapV3Graduator", address: null, source: OURS },
-  pxStakingHub: { label: "PROJECT X StakingHub", address: null, source: OURS },
 };
 
 export class IntegrationMissingError extends Error {

@@ -9,7 +9,6 @@ export const metadata: Metadata = { title: "Portfolio" };
 const PENDING_SECTIONS = [
   { title: "Token holdings", note: "Needs the market-data indexer or a token-balance API (Phase 6)." },
   { title: "Liquidity positions", note: "Ships with Pools (Phase 4)." },
-  { title: "Staking positions & pending rewards", note: "Ships with Stake (Phase 5)." },
   { title: "Total portfolio value", note: "Requires verified price data. No value is shown until prices are real." },
 ];
 

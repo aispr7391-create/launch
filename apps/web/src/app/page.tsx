@@ -10,7 +10,6 @@ const QUICK_ACTIONS: { label: string; href: string; icon: ModuleKey }[] = [
   { label: "Launch token", href: "/launch", icon: "launch" },
   { label: "Swap", href: "/trade", icon: "trade" },
   { label: "Add liquidity", href: "/pools", icon: "pools" },
-  { label: "Stake", href: "/stake", icon: "stake" },
 ];
 
 export default function OverviewPage() {
@@ -20,7 +19,7 @@ export default function OverviewPage() {
     <div className="animate-rise space-y-8">
       <PageHeader title="Overview" description={BRAND.tagline} />
 
-      <section className="grid grid-cols-2 gap-3 sm:grid-cols-4" aria-label="Quick actions">
+      <section className="grid grid-cols-1 gap-3 sm:grid-cols-3" aria-label="Quick actions">
         {QUICK_ACTIONS.map((a) => {
           const status = MODULES.find((m) => m.href === a.href)?.status;
           return (

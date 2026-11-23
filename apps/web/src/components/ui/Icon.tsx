@@ -7,7 +7,6 @@ const paths: Record<IconName, React.ReactNode> = {
   launch: <path d="M12 2c3 3 4.5 6.5 4.5 10.5L12 17l-4.5-4.5C7.5 8.5 9 5 12 2zM7.5 12.5 4 15l3 1M16.5 12.5 20 15l-3 1M10 19l2 3 2-3" />,
   trade: <path d="M4 8h13l-3-3M20 16H7l3 3" />,
   pools: <path d="M3 15c2 0 2-1.5 4.5-1.5S10 15 12 15s2-1.5 4.5-1.5S19 15 21 15M3 19c2 0 2-1.5 4.5-1.5S10 19 12 19s2-1.5 4.5-1.5S19 19 21 19M12 3l4 6a4 4 0 1 1-8 0z" />,
-  stake: <path d="M4 7l8-4 8 4-8 4zM4 12l8 4 8-4M4 17l8 4 8-4" />,
   explore: <path d="M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM20 20l-4-4" />,
   portfolio: <path d="M3 7h18v13H3zM8 7V4h8v3M3 12h18" />,
   creator: <path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.4l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z" />,

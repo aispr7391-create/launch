@@ -10,7 +10,6 @@ export type ModuleKey =
   | "launch"
   | "trade"
   | "pools"
-  | "stake"
   | "explore"
   | "portfolio"
   | "creator"
@@ -91,17 +90,6 @@ export const MODULES: ModuleDef[] = [
     dependencies: ["Uniswap v3 Factory + PositionManager verified ✓", "Full pool list, volume and charts need the market-data indexer"],
   },
   {
-    key: "stake",
-    href: "/stake",
-    label: "Stake",
-    stage: 7,
-    status: "planned",
-    group: "main",
-    summary: "Flexible and fixed-term staking pools with rewards computed by the contract.",
-    features: ["Explore pools", "Stake / unstake / claim", "Flexible and fixed-term locks", "APR from on-chain reward rate", "Staking history"],
-    dependencies: ["StakingHub — written and tested, awaiting audit and deployment"],
-  },
-  {
     key: "explore",
     href: "/explore",
     label: "Explore",
@@ -120,8 +108,8 @@ export const MODULES: ModuleDef[] = [
     status: "partial",
     group: "main",
     summary: "Your balances, positions and activity on Robinhood Chain.",
-    features: ["ETH balance (live)", "ERC-20 holdings", "LP and staking positions", "Pending rewards", "Transaction history"],
-    dependencies: ["Indexer for holdings and prices", "Launchpad/StakingHub deployment for positions"],
+    features: ["ETH balance (live)", "ERC-20 holdings", "Liquidity positions", "Transaction history"],
+    dependencies: ["Indexer for holdings and prices"],
   },
   {
     key: "creator",
@@ -142,7 +130,7 @@ export const MODULES: ModuleDef[] = [
     status: "planned",
     group: "more",
     summary: "Protocol-wide statistics, every number traceable to on-chain events.",
-    features: ["Tokens launched / graduated", "Volume and liquidity", "Staking deposits", "Protocol fees", "Daily and launch activity"],
+    features: ["Tokens launched / graduated", "Volume and liquidity", "Protocol fees", "Daily and launch activity"],
     dependencies: ["Indexer (Stage 6)", "PROJECT X contracts deployed"],
   },
   {

@@ -32,7 +32,7 @@ export function ActivityList() {
       />
       {!mounted || txs.length === 0 ? (
         <p className="flex-1 px-5 py-6 text-[13px] text-muted">
-          No transactions yet. Launches, swaps, liquidity and staking actions will appear here with their on-chain status.
+          No transactions yet. Launches, swaps and liquidity actions will appear here with their on-chain status.
         </p>
       ) : (
         <ul className="divide-y divide-line">

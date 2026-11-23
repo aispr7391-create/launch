@@ -7,7 +7,7 @@ import { Icon } from "@/components/ui/Icon";
 import { cn } from "@/lib/cn";
 import { isActivePath } from "./Sidebar";
 
-const MOBILE_KEYS = ["overview", "trade", "launch", "stake", "portfolio"] as const;
+const MOBILE_KEYS = ["overview", "trade", "launch", "pools", "portfolio"] as const;
 
 export function MobileNav() {
   const pathname = usePathname();
