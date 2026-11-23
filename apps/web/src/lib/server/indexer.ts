@@ -1,6 +1,7 @@
 import "server-only";
 import { getAddress, parseAbi, parseEventLogs, type Address, type Log } from "viem";
 import { serverClient as client } from "./chain";
+import { authHeaders } from "./supabase";
 
 /**
  * Uniswap v3 market-data indexer for Robinhood Chain Mainnet (4663), run in short steps
@@ -48,7 +49,7 @@ async function sb(path: string, init?: RequestInit): Promise<unknown> {
   const res = await fetch(`${url}/rest/v1/${path}`, {
     ...init,
     cache: "no-store",
-    headers: { Authorization: `Bearer ${key}`, apikey: key, "Content-Type": "application/json", ...(init?.headers ?? {}) },
+    headers: { ...authHeaders(key), "Content-Type": "application/json", ...(init?.headers ?? {}) },
   });
   if (!res.ok) throw new Error(`Supabase ${res.status}: ${(await res.text()).slice(0, 300)}`);
   if (res.status === 204 || res.status === 201 || init?.method === "POST" || init?.method === "PATCH") return null;

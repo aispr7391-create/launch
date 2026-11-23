@@ -24,6 +24,14 @@ function env() {
   return { url, key };
 }
 
+/**
+ * Legacy keys are JWTs and go in both headers. New-format keys (sb_secret_…) are not JWTs:
+ * they must be sent only as `apikey`, and the gateway maps them to the service role.
+ */
+export function authHeaders(key: string): Record<string, string> {
+  return key.startsWith("sb_") ? { apikey: key } : { ...authHeaders(key) };
+}
+
 export function isStorageConfigured(): boolean {
   return Boolean(process.env.SUPABASE_URL && process.env.SUPABASE_SERVICE_ROLE_KEY);
 }
@@ -38,8 +46,7 @@ export async function uploadObject(path: string, body: ArrayBuffer | Uint8Array 
   const res = await fetch(`${url}/storage/v1/object/${ASSET_BUCKET}/${path}`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${key}`,
-      apikey: key,
+      ...authHeaders(key),
       "Content-Type": contentType,
       "x-upsert": "true",
       "cache-control": "public, max-age=31536000, immutable",
@@ -55,8 +62,7 @@ export async function upsertRow<T extends object>(table: string, row: T, onConfl
   const res = await fetch(`${url}/rest/v1/${table}?on_conflict=${encodeURIComponent(onConflict)}`, {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${key}`,
-      apikey: key,
+      ...authHeaders(key),
       "Content-Type": "application/json",
       Prefer: "resolution=merge-duplicates,return=minimal",
     },
@@ -69,7 +75,7 @@ export async function selectOne<T>(table: string, column: string, value: string)
   const { url, key } = env();
   const res = await fetch(
     `${url}/rest/v1/${table}?${encodeURIComponent(column)}=eq.${encodeURIComponent(value)}&limit=1`,
-    { headers: { Authorization: `Bearer ${key}`, apikey: key }, cache: "no-store" },
+    { headers: { ...authHeaders(key) }, cache: "no-store" },
   );
   if (!res.ok) throw new Error(`Database read failed (${res.status})`);
   const rows = (await res.json()) as T[];
@@ -86,7 +92,7 @@ export async function sha256Hex(data: ArrayBuffer | Uint8Array | string): Promis
 export async function selectRows<T>(pathAndQuery: string): Promise<T[]> {
   const { url, key } = env();
   const res = await fetch(`${url}/rest/v1/${pathAndQuery}`, {
-    headers: { Authorization: `Bearer ${key}`, apikey: key },
+    headers: { ...authHeaders(key) },
     cache: "no-store",
   });
   if (!res.ok) throw new Error(`Database read failed (${res.status})`);
@@ -98,7 +104,7 @@ export async function countRows(table: string): Promise<number | null> {
   const { url, key } = env();
   const res = await fetch(`${url}/rest/v1/${table}?select=*&limit=1`, {
     method: "HEAD",
-    headers: { Authorization: `Bearer ${key}`, apikey: key, Prefer: "count=exact" },
+    headers: { ...authHeaders(key), Prefer: "count=exact" },
     cache: "no-store",
   });
   const total = res.headers.get("content-range")?.split("/")[1];
