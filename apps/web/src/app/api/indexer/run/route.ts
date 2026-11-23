@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isStorageConfigured } from "@/lib/server/supabase";
+import { isStorageConfigured, keyProblem } from "@/lib/server/supabase";
 import { runIndexStep } from "@/lib/server/indexer";
 
 export const runtime = "nodejs";
@@ -19,6 +19,8 @@ export async function GET(req: Request) {
   if (!isStorageConfigured()) {
     return NextResponse.json({ status: "not_configured" }, { status: 503 });
   }
+  const problem = keyProblem();
+  if (problem) return NextResponse.json({ status: "error", error: problem }, { status: 500 });
   try {
     const result = await runIndexStep(45_000);
     return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });

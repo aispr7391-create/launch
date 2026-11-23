@@ -29,7 +29,22 @@ function env() {
  * they must be sent only as `apikey`, and the gateway maps them to the service role.
  */
 export function authHeaders(key: string): Record<string, string> {
-  return key.startsWith("sb_") ? { apikey: key } : { ...authHeaders(key) };
+  return key.startsWith("sb_") ? { apikey: key } : { Authorization: `Bearer ${key}`, apikey: key };
+}
+
+/** Publishable/anon keys cannot write (RLS); catch the common mix-up with a clear message. */
+export function keyProblem(): string | null {
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY ?? "";
+  if (key.startsWith("sb_publishable_")) return "SUPABASE_SERVICE_ROLE_KEY is a publishable key. Use the secret key (sb_secret_…) or the legacy service_role key.";
+  if (key.startsWith("eyJ")) {
+    try {
+      const role = JSON.parse(Buffer.from(key.split(".")[1] ?? "", "base64url").toString()).role;
+      if (role && role !== "service_role") return `SUPABASE_SERVICE_ROLE_KEY has role "${role}". Use the service_role key.`;
+    } catch {
+      /* not a JWT we can read; let the request decide */
+    }
+  }
+  return null;
 }
 
 export function isStorageConfigured(): boolean {
