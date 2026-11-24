@@ -77,32 +77,48 @@ const setState = (key: string, value: string) => upsert("indexer_state", [{ key,
  * read its receipt from the chain; fall back to a getCode binary search on archive RPCs.
  */
 async function firstDeployBlock(head: bigint): Promise<bigint> {
+  const notes: string[] = [];
+  // 1. Official Blockscout explorer: creation transaction → receipt block.
   try {
-    const res = await fetch(`${robinhoodChain.blockExplorers.default.url}/api/v2/addresses/${FACTORY}`, { cache: "no-store" });
-    if (res.ok) {
-      const j = (await res.json()) as { creation_transaction_hash?: string; creation_tx_hash?: string };
-      const hash = j.creation_transaction_hash ?? j.creation_tx_hash;
-      if (hash && /^0x[0-9a-fA-F]{64}$/.test(hash)) {
-        const receipt = await client.getTransactionReceipt({ hash: hash as `0x${string}` });
-        return receipt.blockNumber;
-      }
+    const res = await fetch(`${robinhoodChain.blockExplorers.default.url}/api/v2/addresses/${FACTORY}`, {
+      cache: "no-store",
+      headers: { accept: "application/json" },
+    });
+    if (!res.ok) throw new Error(`explorer HTTP ${res.status}`);
+    const j = (await res.json()) as Record<string, unknown>;
+    const hash = (j.creation_transaction_hash ?? j.creation_tx_hash) as string | undefined;
+    if (!hash || !/^0x[0-9a-fA-F]{64}$/.test(hash)) throw new Error("explorer has no creation tx");
+    const receipt = await client.getTransactionReceipt({ hash: hash as `0x${string}` });
+    return receipt.blockNumber;
+  } catch (e) {
+    notes.push(`explorer: ${e instanceof Error ? e.message.slice(0, 120) : e}`);
+  }
+  // 2. First PoolCreated event (needs no historical state). Pools cannot exist before the factory.
+  try {
+    const logs = await client.getLogs({ address: FACTORY, fromBlock: 0n, toBlock: head });
+    if (logs.length) return logs[0].blockNumber!;
+    return head; // factory has no pools yet: start from now
+  } catch (e) {
+    notes.push(`getLogs: ${e instanceof Error ? e.message.slice(0, 120) : e}`);
+  }
+  // 3. Archive RPCs only: binary search on historical code.
+  try {
+    const deployed = async (b: bigint) => {
+      const code = await client.getCode({ address: FACTORY, blockNumber: b });
+      return Boolean(code && code !== "0x");
+    };
+    let lo = 0n;
+    let hi = head;
+    while (lo < hi) {
+      const mid = (lo + hi) / 2n;
+      if (await deployed(mid)) hi = mid;
+      else lo = mid + 1n;
     }
-  } catch {
-    /* fall through to binary search */
+    return lo;
+  } catch (e) {
+    notes.push(`getCode: ${e instanceof Error ? e.message.slice(0, 80) : e}`);
   }
-  const deployed = async (b: bigint) => {
-    const code = await client.getCode({ address: FACTORY, blockNumber: b });
-    return Boolean(code && code !== "0x");
-  };
-  if (!(await deployed(head))) throw new Error("Uniswap v3 factory not found at head — wrong chain?");
-  let lo = 0n;
-  let hi = head;
-  while (lo < hi) {
-    const mid = (lo + hi) / 2n;
-    if (await deployed(mid)) hi = mid;
-    else lo = mid + 1n;
-  }
-  return lo;
+  throw new Error(`Could not find the factory deployment block (${notes.join(" | ")}). Set START_BLOCK in Vercel.`);
 }
 
 async function blockTimes(blocks: bigint[]) {
