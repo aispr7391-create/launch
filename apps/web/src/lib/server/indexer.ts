@@ -1,7 +1,6 @@
 import "server-only";
 import { getAddress, parseAbi, parseEventLogs, type Address, type Log } from "viem";
 import { serverClient as client } from "./chain";
-import { robinhoodChain } from "@/config/chains";
 import { authHeaders } from "./supabase";
 
 /**
@@ -30,11 +29,18 @@ const poolAbi = parseAbi([
   "function slot0() view returns (uint160, int24, uint16, uint16, uint16, uint8, bool)",
   "function liquidity() view returns (uint128)",
 ]);
+const poolIdAbi = parseAbi([
+  "function token0() view returns (address)",
+  "function token1() view returns (address)",
+  "function fee() view returns (uint24)",
+  "function tickSpacing() view returns (int24)",
+]);
+const factoryReadAbi = parseAbi(["function getPool(address, address, uint24) view returns (address)"]);
 const erc20 = parseAbi(["function symbol() view returns (string)", "function decimals() view returns (uint8)", "function balanceOf(address) view returns (uint256)"]);
 const npmAbi = parseAbi(["function WETH9() view returns (address)"]);
 
 const CONFIRMATIONS = 20n;
-const MIN_CHUNK = 100n;
+const MIN_CHUNK = 10n;
 const MAX_CHUNK = 200_000n;
 const LOCK_MS = 90_000;
 
@@ -72,53 +78,73 @@ const setState = (key: string, value: string) => upsert("indexer_state", [{ key,
 
 // ---------- helpers ----------
 /**
- * Block where the v3 factory was deployed. The public RPC is not an archive node (no historical
- * eth_getCode), so ask the official Blockscout explorer for the creation transaction first and
- * read its receipt from the chain; fall back to a getCode binary search on archive RPCs.
+ * Where a fresh index starts. Full history would need an archive RPC (the public one serves no
+ * historical state and limits log ranges), so start a few days back: enough for 24h stats.
+ * Pools older than that are picked up the first time they emit an event (see verifyPools).
  */
-async function firstDeployBlock(head: bigint): Promise<bigint> {
-  const notes: string[] = [];
-  // 1. Official Blockscout explorer: creation transaction → receipt block.
-  try {
-    const res = await fetch(`${robinhoodChain.blockExplorers.default.url}/api/v2/addresses/${FACTORY}`, {
-      cache: "no-store",
-      headers: { accept: "application/json" },
-    });
-    if (!res.ok) throw new Error(`explorer HTTP ${res.status}`);
-    const j = (await res.json()) as Record<string, unknown>;
-    const hash = (j.creation_transaction_hash ?? j.creation_tx_hash) as string | undefined;
-    if (!hash || !/^0x[0-9a-fA-F]{64}$/.test(hash)) throw new Error("explorer has no creation tx");
-    const receipt = await client.getTransactionReceipt({ hash: hash as `0x${string}` });
-    return receipt.blockNumber;
-  } catch (e) {
-    notes.push(`explorer: ${e instanceof Error ? e.message.slice(0, 120) : e}`);
+const LOOKBACK_SECONDS = 3n * 24n * 3600n;
+async function startBlock(head: bigint): Promise<bigint> {
+  if (process.env.START_BLOCK) return BigInt(process.env.START_BLOCK);
+  const sample = 100_000n < head ? 100_000n : head / 2n;
+  const [h, p] = await Promise.all([client.getBlock({ blockNumber: head }), client.getBlock({ blockNumber: head - sample })]);
+  const secs = h.timestamp - p.timestamp || 1n;
+  const back = (LOOKBACK_SECONDS * sample) / secs;
+  return head > back ? head - back : 0n;
+}
+
+/** Addresses that emitted v3-shaped events but are not pools of the official factory. */
+const notPools = new Set<string>();
+
+/**
+ * Accept an address as a pool only if the official factory returns it for its own
+ * (token0, token1, fee). Reads current state only. Returns rows for newly found pools.
+ */
+async function verifyPools(addresses: string[], weth: string) {
+  const rows: object[] = [];
+  for (let i = 0; i < addresses.length; i += 20) {
+    await Promise.all(
+      addresses.slice(i, i + 20).map(async (addr) => {
+        try {
+          const a = addr as Address;
+          const [t0, t1, fee, spacing] = await Promise.all([
+            client.readContract({ address: a, abi: poolIdAbi, functionName: "token0" }),
+            client.readContract({ address: a, abi: poolIdAbi, functionName: "token1" }),
+            client.readContract({ address: a, abi: poolIdAbi, functionName: "fee" }),
+            client.readContract({ address: a, abi: poolIdAbi, functionName: "tickSpacing" }),
+          ]);
+          const real = await client.readContract({ address: FACTORY, abi: factoryReadAbi, functionName: "getPool", args: [t0, t1, fee] });
+          if (real.toLowerCase() !== addr) {
+            notPools.add(addr);
+            return;
+          }
+          const [s0, s1, d0, d1] = await Promise.all([
+            client.readContract({ address: t0, abi: erc20, functionName: "symbol" }).catch(() => "?"),
+            client.readContract({ address: t1, abi: erc20, functionName: "symbol" }).catch(() => "?"),
+            client.readContract({ address: t0, abi: erc20, functionName: "decimals" }).catch(() => 18),
+            client.readContract({ address: t1, abi: erc20, functionName: "decimals" }).catch(() => 18),
+          ]);
+          rows.push({
+            address: addr,
+            token0: t0.toLowerCase(),
+            token1: t1.toLowerCase(),
+            symbol0: String(s0).slice(0, 32),
+            symbol1: String(s1).slice(0, 32),
+            decimals0: Number(d0),
+            decimals1: Number(d1),
+            fee: Number(fee),
+            tick_spacing: Number(spacing),
+            // Created before the indexed window: creation block/time unknown (0 / null), not guessed.
+            created_block: 0,
+            created_at: null,
+            weth_side: t0.toLowerCase() === weth ? 0 : t1.toLowerCase() === weth ? 1 : null,
+          });
+        } catch {
+          notPools.add(addr);
+        }
+      }),
+    );
   }
-  // 2. First PoolCreated event (needs no historical state). Pools cannot exist before the factory.
-  try {
-    const logs = await client.getLogs({ address: FACTORY, fromBlock: 0n, toBlock: head });
-    if (logs.length) return logs[0].blockNumber!;
-    return head; // factory has no pools yet: start from now
-  } catch (e) {
-    notes.push(`getLogs: ${e instanceof Error ? e.message.slice(0, 120) : e}`);
-  }
-  // 3. Archive RPCs only: binary search on historical code.
-  try {
-    const deployed = async (b: bigint) => {
-      const code = await client.getCode({ address: FACTORY, blockNumber: b });
-      return Boolean(code && code !== "0x");
-    };
-    let lo = 0n;
-    let hi = head;
-    while (lo < hi) {
-      const mid = (lo + hi) / 2n;
-      if (await deployed(mid)) hi = mid;
-      else lo = mid + 1n;
-    }
-    return lo;
-  } catch (e) {
-    notes.push(`getCode: ${e instanceof Error ? e.message.slice(0, 80) : e}`);
-  }
-  throw new Error(`Could not find the factory deployment block (${notes.join(" | ")}). Set START_BLOCK in Vercel.`);
+  return rows;
 }
 
 async function blockTimes(blocks: bigint[]) {
@@ -197,7 +223,7 @@ export async function runIndexStep(budgetMs = 45_000): Promise<IndexStepResult> 
 
     let last = await getState("last_block");
     if (!last) {
-      const start = process.env.START_BLOCK ? BigInt(process.env.START_BLOCK) : await firstDeployBlock(head);
+      const start = await startBlock(head);
       last = (start - 1n).toString();
       await setState("last_block", last);
     }
@@ -265,6 +291,15 @@ export async function runIndexStep(budgetMs = 45_000): Promise<IndexStepResult> 
       }
 
       // 2. swaps / mints / burns, only from pools created by the official factory
+      const unknown = [...new Set(poolLogs.map((l) => l.address.toLowerCase()))].filter((a) => !pools.has(a) && !notPools.has(a));
+      if (unknown.length) {
+        const found = (await verifyPools(unknown, weth)) as { address: string }[];
+        if (found.length) {
+          await upsert("pools", found, "address", true);
+          for (const f of found) pools.add(f.address);
+          newPools += found.length;
+        }
+      }
       const parsed = parseEventLogs({ abi: poolEventsAbi, logs: poolLogs.filter((l) => pools.has(l.address.toLowerCase())) });
       if (parsed.length) {
         const t = await blockTimes(parsed.map((l) => l.blockNumber!));

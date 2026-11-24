@@ -12,7 +12,7 @@ export async function GET() {
   try {
     const [trending, newest, all, state, head] = await Promise.all([
       selectRows<IndexedPool>("pool_stats?select=*&swaps_24h=gt.0&order=volume_eth_24h.desc.nullslast,swaps_24h.desc&limit=5"),
-      selectRows<IndexedPool>("pool_stats?select=*&order=created_block.desc&limit=5"),
+      selectRows<IndexedPool>("pool_stats?select=*&created_block=gt.0&order=created_block.desc&limit=5"),
       selectRows<Pick<IndexedPool, "swaps_24h" | "volume_eth_24h" | "weth_reserve">>("pool_stats?select=swaps_24h,volume_eth_24h,weth_reserve&limit=10000"),
       selectRows<{ key: string; value: string }>("indexer_state?key=in.(last_block)&select=key,value"),
       serverClient.getBlockNumber().catch(() => null),
