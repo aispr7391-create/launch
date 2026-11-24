@@ -93,42 +93,20 @@ export function WhyGrid() {
 
 export function NetworkCard() {
   const c = robinhoodChain;
-  const rows: [string, React.ReactNode][] = [
-    ["Network", c.name + " Mainnet"],
-    ["Chain ID", <span key="id" className="num">{c.id}</span>],
-    ["Gas token", c.nativeCurrency.symbol],
-    ["Public RPC", <span key="rpc" className="num break-all">{c.rpcUrls.default.http[0]}</span>],
-    [
-      "Explorer",
-      <a key="ex" href={c.blockExplorers?.default.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-1 text-accent hover:text-accent-hover">
-        {c.blockExplorers?.default.name} <Icon name="external" size={12} />
-      </a>,
-    ],
-  ];
   return (
-    <div className="grid gap-4 lg:grid-cols-5">
-      <div className="relative overflow-hidden rounded-2xl border border-line bg-surface p-6 lg:col-span-2">
-        <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-16 size-56 rounded-full bg-accent/10 blur-3xl" />
-        <span className="grid size-11 place-items-center rounded-xl border border-line bg-raised text-accent">
-          <Icon name="globe" size={20} />
-        </span>
-        <h3 className="mt-4 text-lg font-semibold tracking-tight">{c.name}</h3>
-        <p className="mt-1.5 text-[13px] leading-5 text-muted">
-          An Arbitrum Orbit (Nitro) Layer 2 that settles to Ethereum. SYNORA runs on its mainnet only, so there is no network to pick and
-          nothing to misconfigure.
-        </p>
-        <Link href="/network" className="mt-4 inline-flex items-center gap-1.5 text-[13px] text-accent hover:text-accent-hover">
-          Live network status <Icon name="arrow" size={13} />
-        </Link>
-      </div>
-      <dl className="divide-y divide-divider rounded-2xl border border-line bg-surface lg:col-span-3">
-        {rows.map(([k, v]) => (
-          <div key={k} className="flex items-center justify-between gap-4 px-5 py-3.5 text-[13px]">
-            <dt className="text-faint">{k}</dt>
-            <dd className="text-right text-fg">{v}</dd>
-          </div>
-        ))}
-      </dl>
+    <div className="relative overflow-hidden rounded-2xl border border-line bg-surface p-6">
+      <div aria-hidden className="pointer-events-none absolute -bottom-20 -left-16 size-56 rounded-full bg-accent/10 blur-3xl" />
+      <span className="grid size-11 place-items-center rounded-xl border border-line bg-raised text-accent">
+        <Icon name="globe" size={20} />
+      </span>
+      <h3 className="mt-4 text-lg font-semibold tracking-tight">{c.name}</h3>
+      <p className="mt-1.5 max-w-2xl text-[13px] leading-5 text-muted">
+        An Arbitrum Orbit (Nitro) Layer 2 that settles to Ethereum. SYNORA runs on its mainnet only, so there is no network to pick and
+        nothing to misconfigure.
+      </p>
+      <Link href="/network" className="mt-4 inline-flex items-center gap-1.5 text-[13px] text-accent hover:text-accent-hover">
+        Live network status <Icon name="arrow" size={13} />
+      </Link>
     </div>
   );
 }
