@@ -22,7 +22,7 @@ export async function GET(req: Request) {
   const problem = keyProblem();
   if (problem) return NextResponse.json({ status: "error", error: problem }, { status: 500 });
   try {
-    const result = await runIndexStep(45_000);
+    const result = await runIndexStep(25_000);
     return NextResponse.json(result, { headers: { "Cache-Control": "no-store" } });
   } catch (err) {
     console.error("[indexer]", err);

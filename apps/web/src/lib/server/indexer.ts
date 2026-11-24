@@ -1,6 +1,6 @@
 import "server-only";
-import { getAddress, parseAbi, parseEventLogs, type Address, type Log } from "viem";
-import { serverClient as client } from "./chain";
+import { createPublicClient, fallback, getAddress, http, parseAbi, parseEventLogs, type Address, type Log } from "viem";
+import { alchemyRpcUrl, robinhoodChain } from "@/config/chains";
 import { authHeaders } from "./supabase";
 
 /**
@@ -14,6 +14,16 @@ import { authHeaders } from "./supabase";
  * Progress lives in public.indexer_state; every write is idempotent, so a step can be cut off
  * at any point and the next one resumes. Stays CONFIRMATIONS blocks behind head to avoid reorgs.
  */
+
+// Short timeouts so one slow RPC call cannot push a step past the function time limit.
+const rpcUrls = [
+  alchemyRpcUrl(process.env.ALCHEMY_API_KEY ?? process.env.NEXT_PUBLIC_ALCHEMY_API_KEY ?? ""),
+  ...robinhoodChain.rpcUrls.default.http,
+].filter((u): u is string => Boolean(u));
+const client = createPublicClient({
+  chain: robinhoodChain,
+  transport: fallback(rpcUrls.map((u) => http(u, { timeout: 8_000, retryCount: 1, batch: { batchSize: 50 } }))),
+});
 
 // Official addresses (Uniswap v3 Robinhood Chain deployments). Keep in sync with config/contracts.ts.
 const FACTORY = getAddress("0x1f7d7550b1b028f7571e69a784071f0205fd2efa");
@@ -41,8 +51,8 @@ const npmAbi = parseAbi(["function WETH9() view returns (address)"]);
 
 const CONFIRMATIONS = 20n;
 const MIN_CHUNK = 10n;
-const MAX_CHUNK = 200_000n;
-const LOCK_MS = 90_000;
+const MAX_CHUNK = 50_000n;
+const LOCK_MS = 65_000;
 
 // ---------- Supabase (service role, server only) ----------
 function sbEnv() {
@@ -204,7 +214,7 @@ export interface IndexStepResult {
 }
 
 /** Index as many blocks as fit in `budgetMs`, then stop. Safe to call concurrently (soft lock). */
-export async function runIndexStep(budgetMs = 45_000): Promise<IndexStepResult> {
+export async function runIndexStep(budgetMs = 25_000): Promise<IndexStepResult> {
   const started = Date.now();
   const lock = await getState("lock_until");
   if (lock && Number(lock) > started) return { status: "busy", ms: 0 };
@@ -228,7 +238,7 @@ export async function runIndexStep(budgetMs = 45_000): Promise<IndexStepResult> 
       await setState("last_block", last);
     }
     const startFrom = BigInt(last) + 1n;
-    let chunk = BigInt((await getState("chunk")) ?? "5000");
+    let chunk = BigInt((await getState("chunk")) ?? "500");
 
     const pools = new Set(((await sb("pools?select=address")) as { address: string }[]).map((r) => r.address));
     const touched = new Set<string>();
@@ -237,6 +247,7 @@ export async function runIndexStep(budgetMs = 45_000): Promise<IndexStepResult> 
     let cursor = startFrom;
 
     while (cursor <= head && Date.now() - started < budgetMs) {
+      const chunkStarted = Date.now();
       const to = cursor + chunk - 1n > head ? head : cursor + chunk - 1n;
       let createdLogs: Log[];
       let poolLogs: Log[];
@@ -340,12 +351,15 @@ export async function runIndexStep(budgetMs = 45_000): Promise<IndexStepResult> 
 
       await setState("last_block", to.toString());
       cursor = to + 1n;
-      // Quiet ranges: grow the window so backfill catches up quickly.
-      if (createdLogs.length + poolLogs.length < 2_000 && chunk < MAX_CHUNK) chunk = chunk * 2n > MAX_CHUNK ? MAX_CHUNK : chunk * 2n;
+      // Size the next range by how long this one took: grow when quick, shrink when slow.
+      const took = Date.now() - chunkStarted;
+      if (took < 4_000 && chunk < MAX_CHUNK) chunk = chunk * 2n > MAX_CHUNK ? MAX_CHUNK : chunk * 2n;
+      else if (took > 12_000 && chunk > MIN_CHUNK) chunk = chunk / 2n < MIN_CHUNK ? MIN_CHUNK : chunk / 2n;
+      await setState("chunk", chunk.toString());
     }
 
-    await setState("chunk", chunk.toString());
-    await snapshot([...touched], head);
+    // Snapshot only what fits; the rest is refreshed on a later step when touched again.
+    if (Date.now() - started < budgetMs + 5_000) await snapshot([...touched].slice(0, 40), head);
 
     return {
       status: "ok",
