@@ -20,20 +20,20 @@ export default function OverviewPage() {
     <div className="animate-rise space-y-8">
       <PageHeader title="Overview" description={BRAND.tagline} />
 
-      <section className="grid grid-cols-1 gap-3 sm:grid-cols-3" aria-label="Quick actions">
+      <section className="grid grid-cols-3 gap-2.5 sm:gap-3" aria-label="Quick actions">
         {QUICK_ACTIONS.map((a) => {
           const status = MODULES.find((m) => m.href === a.href)?.status;
           return (
             <Link
               key={a.href}
               href={a.href}
-              className="group flex items-center gap-3 rounded-xl border border-line bg-surface px-4 py-3.5 transition hover:border-accent/50"
+              className="group flex flex-col items-center gap-2 rounded-xl border border-line bg-surface px-1.5 py-3.5 text-center transition hover:border-accent/50 sm:flex-row sm:gap-3 sm:px-4 sm:text-left"
             >
               <span className="grid size-9 place-items-center rounded-lg bg-accent-soft text-accent">
                 <Icon name={a.icon} size={18} />
               </span>
               <span className="min-w-0">
-                <span className="block text-sm font-medium">{a.label}</span>
+                <span className="block text-[13px] font-medium sm:text-sm">{a.label}</span>
                 <span className="block text-[11px] text-faint">{status === "planned" ? "Not available yet" : "Open"}</span>
               </span>
             </Link>
