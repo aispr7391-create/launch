@@ -92,7 +92,7 @@ const setState = (key: string, value: string) => upsert("indexer_state", [{ key,
  * historical state and limits log ranges), so start a few days back: enough for 24h stats.
  * Pools older than that are picked up the first time they emit an event (see verifyPools).
  */
-const LOOKBACK_SECONDS = 3n * 24n * 3600n;
+const LOOKBACK_SECONDS = 26n * 3600n; // 24h stats + margin
 async function startBlock(head: bigint): Promise<bigint> {
   if (process.env.START_BLOCK) return BigInt(process.env.START_BLOCK);
   const sample = 100_000n < head ? 100_000n : head / 2n;
@@ -237,7 +237,14 @@ export async function runIndexStep(budgetMs = 25_000): Promise<IndexStepResult> 
       last = (start - 1n).toString();
       await setState("last_block", last);
     }
-    const startFrom = BigInt(last) + 1n;
+    let startFrom = BigInt(last) + 1n;
+    // Never lag more than the lookback window: older history adds nothing to 24h stats,
+    // and pools from it are still discovered on their next event.
+    const floor = await startBlock(head);
+    if (startFrom < floor) {
+      startFrom = floor;
+      await setState("last_block", (floor - 1n).toString());
+    }
     let chunk = BigInt((await getState("chunk")) ?? "500");
 
     const pools = new Set(((await sb("pools?select=address")) as { address: string }[]).map((r) => r.address));
@@ -257,6 +264,8 @@ export async function runIndexStep(budgetMs = 25_000): Promise<IndexStepResult> 
           client.getLogs({ fromBlock: cursor, toBlock: to, events: poolEventsAbi }).then((x) => x as unknown as Log[]),
         ]);
       } catch (err) {
+        // Rate-limited: keep what is done and let the next step continue.
+        if (String(err).includes("429")) break;
         // Range too large / too many results for the RPC: shrink and retry.
         if (chunk > MIN_CHUNK) {
           chunk = chunk / 2n < MIN_CHUNK ? MIN_CHUNK : chunk / 2n;
