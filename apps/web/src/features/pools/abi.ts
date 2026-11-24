@@ -1,6 +1,6 @@
 import { parseAbi } from "viem";
 
-/** Uniswap v3-periphery NonfungiblePositionManager (functions used by PROJECT X). */
+/** Uniswap v3-periphery NonfungiblePositionManager (functions used by SYNORA). */
 export const positionManagerAbi = parseAbi([
   "function WETH9() view returns (address)",
   "function factory() view returns (address)",

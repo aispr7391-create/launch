@@ -11,7 +11,7 @@ export const runtime = "nodejs";
 /**
  * POST { txHash } → { token }
  * Records a launch ONLY after independently verifying it on Robinhood Chain Mainnet:
- *  1. the transaction succeeded and was sent to the PROJECT X launchpad,
+ *  1. the transaction succeeded and was sent to the SYNORA launchpad,
  *  2. it emitted TokenCreated from the launchpad,
  *  3. the token address has contract code,
  *  4. the emitted metadataURI is ours and its name/symbol match the on-chain event.
@@ -47,7 +47,7 @@ export async function POST(req: Request) {
 
     const uri = created.args.metadataURI;
     if (!uri.startsWith(publicObjectPrefix() + "metadata/")) {
-      return NextResponse.json({ error: "Metadata was not created through PROJECT X." }, { status: 422 });
+      return NextResponse.json({ error: "Metadata was not created through SYNORA." }, { status: 422 });
     }
     const metaRes = await fetch(uri, { cache: "no-store" });
     if (!metaRes.ok) return NextResponse.json({ error: "Metadata file not found." }, { status: 422 });

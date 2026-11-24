@@ -15,7 +15,7 @@ import { TokenLogo } from "./ui";
 const SOURCE_LABEL: Record<ListedToken["source"], string> = {
   native: "Native",
   official: "Robinhood docs",
-  projectx: "PROJECT X launch",
+  projectx: "SYNORA launch",
   imported: "Imported",
 };
 
@@ -87,7 +87,7 @@ export function TokenSelectModal({ onSelect, onClose, exclude }: { onSelect: (t:
               <p className="font-medium">{lookup.token.symbol} · {lookup.token.name}</p>
               <p className="num text-faint">{lookup.token.address}</p>
               <p className="mt-2 leading-5 text-muted">
-                This token is not on any list PROJECT X trusts. Anyone can create a token with any name — check the contract on the explorer before adding liquidity.
+                This token is not on any list SYNORA trusts. Anyone can create a token with any name — check the contract on the explorer before adding liquidity.
               </p>
               <label className="mt-2 flex items-center gap-2"><input type="checkbox" checked={ack} onChange={(e) => setAck(e.target.checked)} /> I understand</label>
               <Button size="sm" variant="primary" className="mt-2" disabled={!ack} onClick={() => {

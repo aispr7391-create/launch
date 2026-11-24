@@ -43,7 +43,7 @@ export async function POST(req: Request) {
   };
   const errors = { ...validateDetails(details), ...validateSocials(links) };
   const image = str(body.image);
-  if (!image.startsWith(publicObjectPrefix() + "logos/")) errors.image = "Logo must be uploaded through PROJECT X first.";
+  if (!image.startsWith(publicObjectPrefix() + "logos/")) errors.image = "Logo must be uploaded through SYNORA first.";
   const creator = str(body.creator);
   if (!isAddress(creator)) errors.creator = "Invalid creator address.";
   if (Object.keys(errors).length) return NextResponse.json({ error: "Validation failed.", fields: errors }, { status: 422 });

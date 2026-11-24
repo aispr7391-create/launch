@@ -73,7 +73,7 @@ export function MarketActivity() {
           </div>
           <p className="border-t border-line px-5 py-3 text-[11px] leading-4 text-faint">
             From official Uniswap v3 factory and pool events, indexed through block <span className="num">{data.indexedThroughBlock}</span>.
-            ETH figures cover WETH pairs only. Token launches from PROJECT X appear once the launchpad is deployed.
+            ETH figures cover WETH pairs only. Token launches from SYNORA appear once the launchpad is deployed.
           </p>
         </>
       )}

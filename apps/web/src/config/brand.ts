@@ -6,8 +6,8 @@
  * No component hard-codes the product name.
  */
 export const BRAND = {
-  name: "PROJECT X",
-  shortName: "PX",
+  name: "SYNORA",
+  shortName: "SN",
   tagline: "Launch, trade and earn on Robinhood Chain.",
   description:
     "A DeFi platform built exclusively for Robinhood Chain: token launches, trading and liquidity in one place.",

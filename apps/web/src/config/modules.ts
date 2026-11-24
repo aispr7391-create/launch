@@ -131,7 +131,7 @@ export const MODULES: ModuleDef[] = [
     group: "more",
     summary: "Protocol-wide statistics, every number traceable to on-chain events.",
     features: ["Tokens launched / graduated", "Volume and liquidity", "Protocol fees", "Daily and launch activity"],
-    dependencies: ["Indexer (Stage 6)", "PROJECT X contracts deployed"],
+    dependencies: ["Indexer (Stage 6)", "SYNORA contracts deployed"],
   },
   {
     key: "network",

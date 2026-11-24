@@ -10,7 +10,7 @@ import { fetchTokenMeta, type TokenMeta } from "./onchain";
 /**
  * Token sources, in order of trust:
  *  - "official": addresses on Robinhood's own contracts page (WETH, USDG); metadata read on-chain.
- *  - "projectx": tokens with a verified PROJECT X launch record.
+ *  - "projectx": tokens with a verified SYNORA launch record.
  *  - "imported": pasted by the user; stored only in this browser and always shown with a warning.
  * There is no curated third-party token list for Robinhood Chain in this app.
  */

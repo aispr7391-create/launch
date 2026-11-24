@@ -3,7 +3,7 @@ import type { Chain } from "viem";
 import { alchemyRpcUrl, robinhoodChain } from "./chains";
 import { ALCHEMY_API_KEY } from "./env";
 
-/** PROJECT X runs on Robinhood Chain Mainnet (4663) only. There is no network selector. */
+/** SYNORA runs on Robinhood Chain Mainnet (4663) only. There is no network selector. */
 export const ACTIVE_CHAIN: Chain = robinhoodChain;
 
 function transportFor(chain: Chain): Transport {

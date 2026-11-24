@@ -134,7 +134,7 @@ export function LaunchForm() {
   };
 
   const blockers: string[] = [];
-  if (lp.kind === "not-deployed") blockers.push("The PROJECT X launchpad contract is not deployed on Robinhood Chain Mainnet yet (pending audit).");
+  if (lp.kind === "not-deployed") blockers.push("The SYNORA launchpad contract is not deployed on Robinhood Chain Mainnet yet (pending audit).");
   if (lp.kind === "error") blockers.push(lp.message);
   if (lp.kind === "ready" && lp.paused) blockers.push("New launches are paused by the protocol.");
   if (storage.data === false) blockers.push("Logo and metadata storage is not configured on this server.");
@@ -193,7 +193,7 @@ export function LaunchForm() {
               <>
                 <LogoField value={logo} onChange={setLogo} error={err(0, "logo")} disabled={running} />
                 <Field label="Token name" htmlFor="name" error={err(0, "name")} hint="Shown everywhere your token appears. 2–32 characters." counter={`${details.name.length}/${NAME_MAX}`}>
-                  <TextInput id="name" placeholder="e.g. Project X" maxLength={NAME_MAX} value={details.name} invalid={Boolean(err(0, "name"))}
+                  <TextInput id="name" placeholder="e.g. Aurora Token" maxLength={NAME_MAX} value={details.name} invalid={Boolean(err(0, "name"))}
                     onChange={(e) => setDetails((d) => ({ ...d, name: e.target.value }))} autoComplete="off" />
                 </Field>
                 <Field label="Ticker" htmlFor="symbol" error={err(0, "symbol")} hint="Letters and digits, converted to uppercase. 2–10 characters." counter={`${details.symbol.length}/${SYMBOL_MAX}`}>
@@ -419,7 +419,7 @@ function ConfigStep(props: {
               ? "Reading parameters from Robinhood Chain…"
               : lp.kind === "error"
                 ? lp.message
-                : "These values are read from the deployed launchpad contract. It is not deployed yet, so they cannot be shown — PROJECT X does not display assumed values."}
+                : "These values are read from the deployed launchpad contract. It is not deployed yet, so they cannot be shown — SYNORA does not display assumed values."}
           </p>
         )}
         <div className="divide-y divide-divider rounded-xl border border-line px-4">

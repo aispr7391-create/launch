@@ -1,7 +1,7 @@
 import { defineChain } from "viem";
 
 /**
- * Robinhood Chain Mainnet — the only network PROJECT X supports.
+ * Robinhood Chain Mainnet — the only network SYNORA supports.
  *
  * Values from the official documentation: https://docs.robinhood.com/chain/connecting
  * Robinhood Chain is an Arbitrum Orbit (Nitro) L2 that settles to Ethereum; gas is paid in ETH.

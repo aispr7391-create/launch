@@ -241,7 +241,7 @@ export function AddLiquidity() {
                   </div>
                 )}
                 {pair.data && !pair.data.some((p) => p.state) && (
-                  <p className="mt-2 text-[12px] text-faint">No initialised Uniswap v3 pool exists for this pair. Creating new pools is not supported in PROJECT X yet.</p>
+                  <p className="mt-2 text-[12px] text-faint">No initialised Uniswap v3 pool exists for this pair. Creating new pools is not supported in SYNORA yet.</p>
                 )}
               </div>
             )}

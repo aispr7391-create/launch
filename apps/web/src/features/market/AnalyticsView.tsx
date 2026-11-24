@@ -65,7 +65,7 @@ export function AnalyticsView() {
       <Card>
         <CardHeader eyebrow="Not available yet" title="Launchpad statistics" />
         <p className="px-5 py-5 text-[13px] leading-5 text-muted">
-          Tokens launched and graduated, bonding-curve volume and protocol fees come from the PROJECT X launchpad contract, which is
+          Tokens launched and graduated, bonding-curve volume and protocol fees come from the SYNORA launchpad contract, which is
           not deployed yet (audit required). They will appear here once it is.
         </p>
       </Card>

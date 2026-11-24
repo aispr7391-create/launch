@@ -3,7 +3,7 @@ import { isStorageConfigured, selectRows } from "@/lib/server/supabase";
 
 export const runtime = "nodejs";
 
-/** GET ?limit= → most recent verified PROJECT X launches (address, symbol, name, image). */
+/** GET ?limit= → most recent verified SYNORA launches (address, symbol, name, image). */
 export async function GET(req: Request) {
   if (!isStorageConfigured()) return NextResponse.json([], { status: 200, headers: { "x-storage": "unconfigured" } });
   const limit = Math.min(200, Math.max(1, Number(new URL(req.url).searchParams.get("limit") ?? 50) || 50));

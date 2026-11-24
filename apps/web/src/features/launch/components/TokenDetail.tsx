@@ -117,7 +117,7 @@ export function TokenDetail({ address }: { address: Address }) {
               </p>
             </div>
           )}
-          {!launchpad && <p className="px-5 pb-5 text-[12px] text-faint">Curve data appears once the PROJECT X launchpad is deployed.</p>}
+          {!launchpad && <p className="px-5 pb-5 text-[12px] text-faint">Curve data appears once the SYNORA launchpad is deployed.</p>}
         </Card>
 
         <Card>
@@ -142,7 +142,7 @@ export function TokenDetail({ address }: { address: Address }) {
                 </dl>
               </>
             ) : (
-              <p className="text-muted">No PROJECT X launch record for this token.</p>
+              <p className="text-muted">No SYNORA launch record for this token.</p>
             )}
           </div>
         </Card>

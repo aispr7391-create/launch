@@ -7,7 +7,7 @@ import type { Address } from "viem";
  *  - An address is only added when it appears in an official source (recorded in `source`).
  *  - Every address is re-checked on-chain at runtime on /network (bytecode present and
  *    cross-references match, e.g. NonfungiblePositionManager.WETH9() == WETH).
- *  - PROJECT X's own contracts stay `null` until they are audited, deployed and verified.
+ *  - SYNORA's own contracts stay `null` until they are audited, deployed and verified.
  *    Code must use `requireContract()`, which throws instead of guessing.
  */
 
@@ -76,8 +76,8 @@ export const CONTRACTS: Record<ContractKey, ContractEntry> = {
   },
   uniswapV4StateView: { label: "Uniswap v4 StateView", address: "0xf3334192d15450cdd385c8b70e03f9a6bd9e673b", source: UNI_V4 },
   uniswapV4Quoter: { label: "Uniswap v4 Quoter", address: "0x8dc178efb8111bb0973dd9d722ebeff267c98f94", source: UNI_V4 },
-  pxLaunchpad: { label: "PROJECT X BondingCurveLaunchpad", address: null, source: OURS },
-  pxGraduator: { label: "PROJECT X UniswapV3Graduator", address: null, source: OURS },
+  pxLaunchpad: { label: "SYNORA BondingCurveLaunchpad", address: null, source: OURS },
+  pxGraduator: { label: "SYNORA UniswapV3Graduator", address: null, source: OURS },
 };
 
 export class IntegrationMissingError extends Error {
