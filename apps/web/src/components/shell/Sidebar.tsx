@@ -8,6 +8,7 @@ import { Logo } from "@/components/ui/Logo";
 import { Icon } from "@/components/ui/Icon";
 import { Dot } from "@/components/ui/primitives";
 import { cn } from "@/lib/cn";
+import { LEARN_PAGES } from "@/content/site";
 
 export function isActivePath(pathname: string, href: string) {
   return href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -43,6 +44,23 @@ export function Sidebar() {
               {m.status === "planned" && <span className="num text-[10px] text-faint">S{m.stage}</span>}
             </Link>
             </div>
+          );
+        })}
+        <p className="px-3 pb-1.5 pt-4 text-[11px] font-medium uppercase tracking-[0.14em] text-faint">Learn</p>
+        {LEARN_PAGES.map((p) => {
+          const active = isActivePath(pathname, p.href);
+          return (
+            <Link
+              key={p.href}
+              href={p.href}
+              className={cn(
+                "group flex h-9 items-center gap-3 rounded-lg px-3 text-sm transition",
+                active ? "bg-raised text-fg" : "text-muted hover:bg-surface hover:text-fg",
+              )}
+            >
+              <Icon name={p.icon} className={active ? "text-accent" : "text-faint group-hover:text-muted"} />
+              <span className="flex-1">{p.label}</span>
+            </Link>
           );
         })}
       </nav>

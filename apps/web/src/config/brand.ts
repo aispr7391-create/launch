@@ -11,9 +11,15 @@ export const BRAND = {
   tagline: "Launch, trade and earn on Robinhood Chain.",
   description:
     "A DeFi platform built exclusively for Robinhood Chain: token launches, trading and liquidity in one place.",
+  /**
+   * Official channels, shown on /contact. Leave a value empty until the channel exists:
+   * empty links are displayed as "Not published yet", never as a guessed URL.
+   */
   links: {
-    docs: "",
     x: "",
+    telegram: "",
     discord: "",
-  },
+    github: "",
+    email: "",
+  } as Record<"x" | "telegram" | "discord" | "github" | "email", string>,
 } as const;
