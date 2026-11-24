@@ -1,6 +1,7 @@
 import "server-only";
 import { getAddress, parseAbi, parseEventLogs, type Address, type Log } from "viem";
 import { serverClient as client } from "./chain";
+import { robinhoodChain } from "@/config/chains";
 import { authHeaders } from "./supabase";
 
 /**
@@ -70,7 +71,25 @@ async function getState(key: string): Promise<string | null> {
 const setState = (key: string, value: string) => upsert("indexer_state", [{ key, value }], "key");
 
 // ---------- helpers ----------
+/**
+ * Block where the v3 factory was deployed. The public RPC is not an archive node (no historical
+ * eth_getCode), so ask the official Blockscout explorer for the creation transaction first and
+ * read its receipt from the chain; fall back to a getCode binary search on archive RPCs.
+ */
 async function firstDeployBlock(head: bigint): Promise<bigint> {
+  try {
+    const res = await fetch(`${robinhoodChain.blockExplorers.default.url}/api/v2/addresses/${FACTORY}`, { cache: "no-store" });
+    if (res.ok) {
+      const j = (await res.json()) as { creation_transaction_hash?: string; creation_tx_hash?: string };
+      const hash = j.creation_transaction_hash ?? j.creation_tx_hash;
+      if (hash && /^0x[0-9a-fA-F]{64}$/.test(hash)) {
+        const receipt = await client.getTransactionReceipt({ hash: hash as `0x${string}` });
+        return receipt.blockNumber;
+      }
+    }
+  } catch {
+    /* fall through to binary search */
+  }
   const deployed = async (b: bigint) => {
     const code = await client.getCode({ address: FACTORY, blockNumber: b });
     return Boolean(code && code !== "0x");
@@ -101,6 +120,7 @@ async function blockTimes(blocks: bigint[]) {
 }
 
 async function snapshot(addresses: string[], blockNumber: bigint) {
+  // Current state, not historical: the public RPC does not serve state at past blocks.
   if (!addresses.length) return;
   for (let i = 0; i < addresses.length; i += 50) {
     const batch = addresses.slice(i, i + 50);
@@ -108,10 +128,10 @@ async function snapshot(addresses: string[], blockNumber: bigint) {
     const updates = await Promise.all(
       rows.map(async (p) => {
         const [s0, liquidity, r0, r1] = await Promise.all([
-          client.readContract({ address: p.address, abi: poolAbi, functionName: "slot0", blockNumber }).catch(() => null),
-          client.readContract({ address: p.address, abi: poolAbi, functionName: "liquidity", blockNumber }).catch(() => null),
-          client.readContract({ address: p.token0, abi: erc20, functionName: "balanceOf", args: [p.address], blockNumber }).catch(() => null),
-          client.readContract({ address: p.token1, abi: erc20, functionName: "balanceOf", args: [p.address], blockNumber }).catch(() => null),
+          client.readContract({ address: p.address, abi: poolAbi, functionName: "slot0" }).catch(() => null),
+          client.readContract({ address: p.address, abi: poolAbi, functionName: "liquidity" }).catch(() => null),
+          client.readContract({ address: p.token0, abi: erc20, functionName: "balanceOf", args: [p.address] }).catch(() => null),
+          client.readContract({ address: p.token1, abi: erc20, functionName: "balanceOf", args: [p.address] }).catch(() => null),
         ]);
         return {
           address: p.address,
@@ -274,7 +294,7 @@ export async function runIndexStep(budgetMs = 45_000): Promise<IndexStepResult> 
     }
 
     await setState("chunk", chunk.toString());
-    await snapshot([...touched], cursor - 1n);
+    await snapshot([...touched], head);
 
     return {
       status: "ok",
