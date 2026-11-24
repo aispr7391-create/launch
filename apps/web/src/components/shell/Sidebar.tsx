@@ -20,7 +20,7 @@ export function Sidebar() {
   const secondary = MODULES.filter((m) => m.group === "system");
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-line bg-canvas/80 backdrop-blur lg:flex">
+    <aside className="fixed inset-y-0 left-0 z-30 hidden w-60 flex-col border-r border-line bg-secondary/80 backdrop-blur lg:flex">
       <div className="flex h-16 items-center px-5">
         <Logo />
       </div>

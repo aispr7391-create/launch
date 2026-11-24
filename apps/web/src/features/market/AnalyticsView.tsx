@@ -43,7 +43,7 @@ export function AnalyticsView() {
         <Card>
           <CardHeader eyebrow="Top pools" title="By 24h volume" action={<Link href="/pools/explore" className="text-[12px] text-faint hover:text-fg">All pools →</Link>} />
           {data.trending?.length ? (
-            <div className="divide-y divide-line">
+            <div className="divide-y divide-divider">
               {data.trending.map((p, i) => (
                 <Link key={p.address} href={`/pools/${p.address}`} className="flex items-center gap-3 px-5 py-3 hover:bg-raised">
                   <span className="num w-4 text-[12px] text-faint">{i + 1}</span>

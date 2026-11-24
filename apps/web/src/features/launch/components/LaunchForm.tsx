@@ -248,7 +248,7 @@ export function LaunchForm() {
             {step === 3 && (
               <div className="space-y-4">
                 <p className="text-sm text-muted">Check how your token will appear. Use Edit to change anything.</p>
-                <dl className="divide-y divide-line rounded-xl border border-line">
+                <dl className="divide-y divide-divider rounded-xl border border-line">
                   {[
                     ["Name", details.name.trim(), 0],
                     ["Ticker", details.symbol, 0],
@@ -293,7 +293,7 @@ export function LaunchForm() {
                 </div>
                 {details.description.trim() && <p className="whitespace-pre-line break-words text-[13px] leading-5 text-muted">{details.description.trim()}</p>}
 
-                <div className="divide-y divide-line rounded-xl border border-line px-4">
+                <div className="divide-y divide-divider rounded-xl border border-line px-4">
                   <ReadOnlyRow label="Total supply" value={supply ? `${supply.toLocaleString("en-US")} ${details.symbol}` : "—"} />
                   <ReadOnlyRow label="Launch type" value="Bonding curve → Uniswap v3" />
                   <ReadOnlyRow label="Creation fee" value={lp.kind === "ready" ? eth(lp.config.creationFee) : "Unavailable"} />
@@ -422,7 +422,7 @@ function ConfigStep(props: {
                 : "These values are read from the deployed launchpad contract. It is not deployed yet, so they cannot be shown — PROJECT X does not display assumed values."}
           </p>
         )}
-        <div className="divide-y divide-line rounded-xl border border-line px-4">
+        <div className="divide-y divide-divider rounded-xl border border-line px-4">
           <ReadOnlyRow label="Decimals" value={TOKEN_DECIMALS} hint="Fixed by the token contract." />
           <ReadOnlyRow label="Launch type" value="Bonding curve" hint="Constant-product curve on virtual reserves." />
           <ReadOnlyRow label="Buy fee" value={c ? pct(c.tradeFeeBps) : na} hint={c ? `${pct(c.creatorShareBps)} of fees go to you as creator` : undefined} />
@@ -498,7 +498,7 @@ function LaunchProgress({ flow }: { flow: ReturnType<typeof useLaunchFlow> }) {
 
   return (
     <div className="rounded-xl border border-line" aria-live="polite">
-      <ol className="divide-y divide-line">
+      <ol className="divide-y divide-divider">
         {FLOW_STEPS.map((s, i) => {
           const done = state.done.includes(s.key);
           const active = s.key === state.step && state.status === "running";

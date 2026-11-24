@@ -62,7 +62,7 @@ export function PoolsOverview() {
           ) : open.length === 0 ? (
             <EmptyState title="No open positions"><Link href="/pools/add"><Button size="sm" variant="primary" className="mt-3">Add liquidity</Button></Link></EmptyState>
           ) : (
-            <ul className="divide-y divide-line">
+            <ul className="divide-y divide-divider">
               {open.slice(0, 6).map((p) => (
                 <li key={p.tokenId.toString()}>
                   <Link href={`/pools/positions/${p.tokenId}`} className="flex items-center gap-3 px-5 py-3 text-[13px] hover:bg-raised">
@@ -80,7 +80,7 @@ export function PoolsOverview() {
           {!isConnected ? <EmptyState title="—" /> : fees.length === 0 ? (
             <EmptyState title="No uncollected fees" />
           ) : (
-            <ul className="divide-y divide-line">
+            <ul className="divide-y divide-divider">
               {fees.map((f) => <li key={f.symbol} className="flex justify-between px-5 py-2.5 text-[13px]"><span className="text-muted">{f.symbol}</span><span className="num">{fmtAmount(f.amount, f.decimals)}</span></li>)}
             </ul>
           )}
@@ -92,7 +92,7 @@ export function PoolsOverview() {
         <Card>
           <CardHeader eyebrow="Activity" title="Your recent liquidity transactions" />
           {activity.length === 0 ? <EmptyState title="No liquidity transactions from this browser yet" /> : (
-            <ul className="divide-y divide-line">
+            <ul className="divide-y divide-divider">
               {activity.map((t) => (
                 <li key={t.hash}><a href={explorer.tx(t.hash)} target="_blank" rel="noreferrer" className="flex justify-between gap-3 px-5 py-2.5 text-[13px] hover:bg-raised">
                   <span className="truncate">{t.label}</span>
@@ -132,7 +132,7 @@ function ProtocolLiquidity() {
       ) : q.isLoading ? <div className="p-5"><Skeleton /></div> : (q.data ?? []).length === 0 ? (
         <EmptyState title="No graduated tokens yet" />
       ) : (
-        <ul className="divide-y divide-line">
+        <ul className="divide-y divide-divider">
           {q.data!.map((p) => (
             <li key={p.tokenId.toString()}><Link href={`/pools/${p.pool.address}`} className="flex justify-between px-5 py-2.5 text-[13px] hover:bg-raised">
               <span>{p.pool.token0.symbol}/{p.pool.token1.symbol}</span><span className="num text-faint">NFT #{p.tokenId.toString()}</span>

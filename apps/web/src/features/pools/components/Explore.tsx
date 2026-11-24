@@ -81,7 +81,7 @@ export function ExplorePools() {
                   <th className="px-4 py-2.5 font-medium">Created</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-line">
+              <tbody className="divide-y divide-divider">
                 {index.data.pools.map((p) => (
                   <tr key={p.address} className="hover:bg-raised">
                     <td className="px-4 py-3">

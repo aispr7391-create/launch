@@ -49,7 +49,7 @@ export function MarketActivity() {
             <Mini label="Volume 24h" value={fmtEth(data.totals!.volumeEth24h)} hint="WETH pairs" />
             <Mini label="WETH locked" value={fmtEth(data.totals!.wethLocked)} />
           </div>
-          <div className="grid divide-line sm:grid-cols-2 sm:divide-x">
+          <div className="grid divide-divider sm:grid-cols-2 sm:divide-x">
             <div className="py-2">
               <p className="px-5 py-2 text-[11px] uppercase tracking-wider text-faint">Trending · 24h volume</p>
               {data.trending?.length ? (

@@ -35,7 +35,7 @@ export function ActivityList() {
           No transactions yet. Launches, swaps and liquidity actions will appear here with their on-chain status.
         </p>
       ) : (
-        <ul className="divide-y divide-line">
+        <ul className="divide-y divide-divider">
           {txs.slice(0, 10).map((t) => (
             <li key={t.hash}>
               <a href={explorer.tx(t.hash)} target="_blank" rel="noreferrer" className="flex items-center gap-3 px-5 py-3 text-sm hover:bg-raised">

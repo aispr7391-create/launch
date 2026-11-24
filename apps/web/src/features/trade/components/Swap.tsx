@@ -323,7 +323,7 @@ function SwapHistory() {
       {!mounted || swaps.length === 0 ? (
         <p className="px-5 py-8 text-center text-[13px] text-muted">No swaps from this browser yet. Each swap appears here with its confirmed on-chain status.</p>
       ) : (
-        <ul className="divide-y divide-line">
+        <ul className="divide-y divide-divider">
           {swaps.map((t) => (
             <li key={t.hash}>
               <a href={explorer.tx(t.hash)} target="_blank" rel="noreferrer" className="flex items-center justify-between gap-3 px-5 py-3 text-[13px] hover:bg-raised">

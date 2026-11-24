@@ -31,7 +31,7 @@ export default function NetworkPage() {
 
       <Card>
         <CardHeader eyebrow="Configuration" title="Active network" />
-        <dl className="divide-y divide-line">
+        <dl className="divide-y divide-divider">
           {rows.map(([k, v]) => (
             <div key={k} className="grid gap-1 px-5 py-3 text-sm sm:grid-cols-3">
               <dt className="text-muted">{k}</dt>
@@ -45,7 +45,7 @@ export default function NetworkPage() {
 
       <Card>
         <CardHeader eyebrow="Integrations" title="What is real today" />
-        <ul className="divide-y divide-line">
+        <ul className="divide-y divide-divider">
           {INTEGRATIONS.map((i) => (
             <li key={i.name} className="flex flex-col gap-2 px-5 py-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="min-w-0">

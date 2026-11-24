@@ -16,7 +16,7 @@ export function ModulePending({ moduleKey }: { moduleKey: ModuleKey }) {
       <div className="grid gap-4 lg:grid-cols-5">
         <Card className="lg:col-span-3">
           <CardHeader eyebrow={`Stage ${m.stage}`} title="What this module will do" />
-          <ul className="divide-y divide-line">
+          <ul className="divide-y divide-divider">
             {m.features.map((f) => (
               <li key={f} className="flex items-center gap-3 px-5 py-3 text-sm">
                 <span className="size-1.5 rounded-full bg-line-strong" />

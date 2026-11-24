@@ -29,7 +29,7 @@ export function CardHeader({
 
 type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 const buttonStyles: Record<ButtonVariant, string> = {
-  primary: "bg-accent text-white hover:brightness-110 active:brightness-95",
+  primary: "bg-accent text-white hover:bg-accent-hover active:bg-accent-active",
   secondary: "border border-line-strong bg-raised text-fg hover:border-faint",
   ghost: "text-muted hover:bg-raised hover:text-fg",
   danger: "border border-down/40 text-down hover:bg-down/10",
@@ -45,7 +45,7 @@ export function Button({
     <button
       className={cn(
         "inline-flex items-center justify-center gap-2 rounded-lg font-medium transition duration-150",
-        "disabled:cursor-not-allowed disabled:opacity-50",
+        "disabled:cursor-not-allowed disabled:opacity-50 disabled:text-disabled",
         size === "sm" ? "h-8 px-3 text-[13px]" : "h-10 px-4 text-sm",
         buttonStyles[variant],
         className,

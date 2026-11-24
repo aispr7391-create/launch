@@ -2,24 +2,30 @@
 
 /*
  * Design tokens. Rebrand by editing the accent values here.
- * Palette: navy/charcoal surfaces, cool off-white text, one blue signal colour.
+ * Palette: Midnight Blue + Electric Blue (dark premium).
  */
 @theme {
-  --color-canvas: #0a0e14;
-  --color-surface: #0f141c;
-  --color-raised: #151b25;
-  --color-line: #1e2632;
-  --color-line-strong: #2a3443;
-  --color-fg: #e6ebf2;
-  --color-muted: #8591a5;
-  --color-faint: #566275;
+  --color-canvas: #080d18;
+  --color-secondary: #0c1321;
+  --color-surface: #101827;
+  --color-raised: #172338;
+  --color-line: #1d2a3d;
+  --color-line-strong: #293a52;
+  --color-divider: #19263a;
+  --color-fg: #f1f5fc;
+  --color-muted: #a3b1c6;
+  --color-faint: #77879f;
+  --color-disabled: #526178;
 
-  --color-accent: #4c8dff;
-  --color-accent-soft: #4c8dff1f;
-  --color-up: #2fd08a;
-  --color-down: #ff5c6c;
-  --color-info: #5ec8e5;
-  --color-warn: #f0b54a;
+  --color-accent: #397bff;
+  --color-accent-hover: #5590ff;
+  --color-accent-active: #2865e8;
+  --color-accent-2: #65b5ff;
+  --color-accent-soft: #397bff1f;
+  --color-up: #28c98b;
+  --color-down: #f16b78;
+  --color-info: #65b5ff;
+  --color-warn: #f2b84b;
 
   --font-sans: var(--font-ui), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-num), ui-monospace, SFMono-Regular, monospace;
@@ -62,8 +68,8 @@ body {
 /* Faint engineering grid behind the canvas. */
 .grid-bg {
   background-image:
-    linear-gradient(to right, #8fb4ff08 1px, transparent 1px),
-    linear-gradient(to bottom, #8fb4ff08 1px, transparent 1px);
+    linear-gradient(to right, #397bff08 1px, transparent 1px),
+    linear-gradient(to bottom, #397bff08 1px, transparent 1px);
   background-size: 48px 48px;
   mask-image: radial-gradient(ellipse at top, black 30%, transparent 75%);
 }

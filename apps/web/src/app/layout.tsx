@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   icons: { icon: "/icon.svg" },
 };
 
-export const viewport: Viewport = { themeColor: "#0a0e14" };
+export const viewport: Viewport = { themeColor: "#080d18" };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // Restores the wallet connection on the server render to avoid a hydration flash.

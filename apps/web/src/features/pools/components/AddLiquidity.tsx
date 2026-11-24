@@ -332,7 +332,7 @@ export function AddLiquidity() {
       <aside className="space-y-4 lg:sticky lg:top-24 lg:self-start">
         <Card>
           <CardHeader eyebrow="Review" title="Transaction details" />
-          <div className="divide-y divide-line px-5 text-[13px]">
+          <div className="divide-y divide-divider px-5 text-[13px]">
             <Row k="Pool" v={pool ? <AddressLink address={pool.address} /> : "—"} />
             <Row k="Fee tier" v={pool ? feeLabel(pool.fee) : "—"} />
             <Row k="Range" v={ticks && pool ? (rangeMode === "full" && !pos ? "Full range" : `${formatPrice(aIs0 ? priceBA(ticks[0]) : priceBA(ticks[1]))} – ${formatPrice(aIs0 ? priceBA(ticks[1]) : priceBA(ticks[0]))}`) : "—"} />

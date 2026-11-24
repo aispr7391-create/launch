@@ -8,7 +8,7 @@ import { ConnectWalletButton } from "@/components/wallet/ConnectWalletButton";
 
 export function TopBar() {
   return (
-    <header className="sticky top-0 z-20 border-b border-line bg-canvas/80 backdrop-blur">
+    <header className="sticky top-0 z-20 border-b border-line bg-secondary/80 backdrop-blur">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-3 px-4 sm:px-6">
         <div className="lg:hidden">
           <Logo compact />

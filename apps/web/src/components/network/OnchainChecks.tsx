@@ -103,7 +103,7 @@ export function OnchainChecks() {
           )
         }
       />
-      <ul className="divide-y divide-line">
+      <ul className="divide-y divide-divider">
         {rows.map(
           (r) => (
             <li key={r.key} className="flex flex-col gap-2 px-5 py-3 sm:flex-row sm:items-center sm:justify-between">

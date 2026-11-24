@@ -89,7 +89,7 @@ export function PoolDetail({ address }: { address: string }) {
           {!me ? <EmptyState title="Connect a wallet to see your positions here" /> : mine.isLoading ? <div className="p-5"><Skeleton /></div> : myPositions.length === 0 ? (
             <EmptyState title="You have no position in this pool"><Link className="text-accent hover:underline" href={`/pools/add?pool=${p.address}`}>Add liquidity</Link></EmptyState>
           ) : (
-            <ul className="divide-y divide-line">
+            <ul className="divide-y divide-divider">
               {myPositions.map((x) => (
                 <li key={x.tokenId.toString()}>
                   <Link href={`/pools/positions/${x.tokenId}`} className="flex items-center justify-between gap-3 px-5 py-3 text-[13px] hover:bg-raised">
@@ -124,7 +124,7 @@ export function PoolDetail({ address }: { address: string }) {
               <thead className="text-left text-[11px] uppercase tracking-wider text-faint">
                 <tr className="border-b border-line"><th className="px-4 py-2 font-medium">Type</th><th className="px-4 py-2 text-right font-medium">{token0.symbol}</th><th className="px-4 py-2 text-right font-medium">{token1.symbol}</th><th className="px-4 py-2 font-medium">Account</th><th className="px-4 py-2 font-medium">Time</th></tr>
               </thead>
-              <tbody className="divide-y divide-line">
+              <tbody className="divide-y divide-divider">
                 {events.data!.events.map((e) => {
                   const a0 = BigInt(e.amount0);
                   const a1 = BigInt(e.amount1);
