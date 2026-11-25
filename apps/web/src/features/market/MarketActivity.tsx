@@ -67,7 +67,7 @@ export function MarketActivity() {
                   <PoolRow key={p.address} p={p} right={p.created_at ? new Date(p.created_at).toLocaleDateString() : `#${p.created_block}`} />
                 ))
               ) : (
-                <p className="px-5 pb-3 text-[12px] text-faint">No pools indexed yet.</p>
+                <p className="px-5 pb-3 text-[12px] text-faint">{data.totals!.pools > 0 ? "No new pools created in the indexed period yet." : "No pools indexed yet."}</p>
               )}
             </div>
           </div>
