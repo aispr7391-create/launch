@@ -221,7 +221,7 @@ export const ROADMAP: { phase: string; title: string; state: PhaseState; items: 
     state: "in-progress",
     items: [
       "Indexer for Uniswap v3 pools, swaps and liquidity events",
-      "Market activity and Analytics from indexed data",
+      "Market activity, Analytics and Explore from indexed data",
       "Launchpad events once the launchpad is deployed",
     ],
   },
@@ -229,7 +229,7 @@ export const ROADMAP: { phase: string; title: string; state: PhaseState; items: 
     phase: "Phase 5",
     title: "Full product",
     state: "planned",
-    items: ["Explore and token discovery", "Creator dashboard", "Complete portfolio holdings", "Staking pools"],
+    items: ["Creator dashboard", "Complete portfolio holdings", "Staking pools", "Recently graduated tokens in Explore"],
   },
   {
     phase: "Phase 6",

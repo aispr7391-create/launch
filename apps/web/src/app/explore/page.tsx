@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
-import { ModulePending } from "@/components/modules/ModulePending";
+import { ExploreView } from "@/features/explore/ExploreView";
 
 export const metadata: Metadata = { title: "Explore" };
 
 export default function ExplorePage() {
-  return <ModulePending moduleKey="explore" />;
+  return <ExploreView />;
 }
