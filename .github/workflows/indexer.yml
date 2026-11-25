@@ -6,6 +6,10 @@ on:
   schedule:
     - cron: "*/10 * * * *"
   workflow_dispatch:
+    inputs:
+      url:
+        description: "Indexer endpoint to call (overrides INDEXER_URL for this run)"
+        required: false
 
 concurrency:
   group: indexer
@@ -17,15 +21,15 @@ jobs:
     timeout-minutes: 12
     env:
       # Override with a repository variable INDEXER_URL if the site moves.
-      URL: ${{ vars.INDEXER_URL || 'https://launch-ecru.vercel.app/api/indexer/run' }}
+      URL: ${{ inputs.url || vars.INDEXER_URL || 'https://launch-ecru.vercel.app/api/indexer/run' }}
       CRON_SECRET: ${{ secrets.CRON_SECRET }}
     steps:
       - name: Run indexer steps
         run: |
           for i in $(seq 1 10); do
             if [ -n "$CRON_SECRET" ]; then AUTH="Authorization: Bearer $CRON_SECRET"; else AUTH="X-Noop: 1"; fi
-            RES=$(curl -sS -m 70 -H "$AUTH" "$URL" || echo '{"status":"curl_failed"}')
-            echo "step $i: $RES"
+            RES=$(curl -sS -m 70 -H "$AUTH" -w '\nHTTP %{http_code}' "$URL" || echo '{"status":"curl_failed"}')
+            echo "step $i: $RES" | head -c 1500; echo
             BEHIND=$(echo "$RES" | sed -n 's/.*"blocksBehind":"\([0-9]*\)".*/\1/p')
             # Stop when caught up, busy, or failing; the next scheduled run continues.
             if [ -z "$BEHIND" ] || [ "$BEHIND" -lt 2000 ]; then break; fi
